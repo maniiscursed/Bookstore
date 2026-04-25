@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}User Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">User Analytics</h1>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted text-uppercase small">Tracked users</div>
+                    <div class="fs-2 fw-bold">{{ total_users }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted text-uppercase small">Average purchases</div>
+                    <div class="fs-2 fw-bold">{{ avg_purchases }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted text-uppercase small">Average spent</div>
+                    <div class="fs-2 fw-bold">₹{{ avg_spent }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'analytics:admin_dashboard' %}" class="btn btn-outline-dark">Back to dashboard</a>
+</div>
+{% endblock %}

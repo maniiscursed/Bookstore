@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <p class="text-uppercase text-muted small mb-1">Admin tools</p>
+            <h1 class="h2 mb-2">Manage Users</h1>
+            <p class="text-muted mb-0">Review accounts and delete users when needed.</p>
+        </div>
+        <a href="{% url 'analytics:admin_dashboard' %}" class="btn btn-outline-dark">Dashboard</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Date Joined</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in users %}
+                        <tr>
+                            <td>{{ row.user.username }}</td>
+                            <td>{{ row.user.email|default:'-' }}</td>
+                            <td>{{ row.role }}</td>
+                            <td>{{ row.user.date_joined|date:'M d, Y' }}</td>
+                            <td class="text-end">
+                                {% if row.user.id != user.id %}
+                                    <form method="post" action="{% url 'analytics:delete_user' row.user.id %}" onsubmit="return confirm('Delete this user?');">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">Current user</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="text-muted">No users found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

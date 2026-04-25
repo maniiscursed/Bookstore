@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% block title %}Sales Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Sales Analytics</h1>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted text-uppercase small">Delivered orders</div>
+                    <div class="fs-2 fw-bold">{{ total_orders }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted text-uppercase small">Revenue</div>
+                    <div class="fs-2 fw-bold">₹{{ total_revenue }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'analytics:admin_dashboard' %}" class="btn btn-outline-dark">Back to dashboard</a>
+</div>
+{% endblock %}

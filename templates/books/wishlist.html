@@ -1,0 +1,152 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Wishlist - BookWorld{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="mb-1">
+                <i class="fas fa-heart text-danger"></i> My Wishlist
+            </h1>
+            <p class="text-muted">Save your favorite books for later</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a href="{% url 'books:book_list' %}" class="btn btn-outline-primary">
+                <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+
+    {% if books %}
+        <div class="row">
+            {% for book in books %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card book-card h-100 position-relative">
+                        {% if book.discount_percentage > 0 %}
+                            <div class="discount-badge">
+                                -{{ book.discount_percentage }}%
+                            </div>
+                        {% endif %}
+                        
+                        <img src="{% if book.cover_image %}{{ book.cover_image.url }}{% else %}https://via.placeholder.com/300x400?text=No+Image{% endif %}" 
+                             class="card-img-top book-image" alt="{{ book.title }}">
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-truncate" title="{{ book.title }}">
+                                {{ book.title }}
+                            </h5>
+                            <p class="card-text text-muted small">{{ book.author }}</p>
+                            
+                            <div class="mb-3">
+                                {% if book.average_rating > 0 %}
+                                    <span class="book-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= book.average_rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <small>({{ book.total_reviews }})</small>
+                                    </span>
+                                {% else %}
+                                    <small class="text-muted">No ratings yet</small>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="mb-3 mt-auto">
+                                {% if book.discount_percentage > 0 %}
+                                    <span class="text-muted"><s>₹{{ book.price|floatformat:2 }}</s></span>
+                                    <span class="book-price">₹{{ book.get_discounted_price|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="book-price">₹{{ book.price|floatformat:2 }}</span>
+                                {% endif %}
+                            </p>
+                            
+                            {% if book.stock > 0 %}
+                                <div class="d-grid gap-2">
+                                    <form method="post" action="{% url 'cart:add_to_cart' book.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100 mb-2">
+                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{% url 'books:add_to_wishlist' book.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning alert-sm mb-0" role="alert">
+                                    <small><i class="fas fa-exclamation-triangle"></i> Out of Stock</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="fas fa-heart fa-4x text-muted opacity-50"></i>
+            </div>
+            <h3 class="text-muted mb-2">Your wishlist is empty</h3>
+            <p class="text-muted mb-4">Start adding your favorite books to your wishlist</p>
+            <a href="{% url 'books:book_list' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-book"></i> Browse Books
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .book-card {
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+        overflow: hidden;
+    }
+    
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .book-image {
+        height: 250px;
+        object-fit: cover;
+    }
+    
+    .book-price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .book-rating {
+        color: #ffc107;
+        font-size: 0.9rem;
+    }
+    
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        z-index: 10;
+    }
+    
+    .alert-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
